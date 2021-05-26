@@ -2,7 +2,6 @@
 # this class combines all basic features of a generic player
 import numpy as np
 import pandas
-from scipy.optimize import minimize
 from math import *
 
 # def f(alpha):
@@ -25,8 +24,10 @@ class Player:
 		self.COP_hp = (0.4 * 60) / (60 - 35)
 		self.COP_cs = 5
 		self.random_lambda = np.random.rand(48)
-		self.prices = {"purchase": np.ones(self.horizon), "sale": np.ones(self.horizon)}
-		self.prices = 20 + 12 * np.random.rand(2 * self.horizon)
+		self.prices_purchase = np.ones(self.horizon)
+		self.prices_sale = np.ones(self.horizon)
+		self.prices_purchase =np.random.rand(self.horizon)
+		self.prices_sale =np.random.rand(self.horizon)
 		self.dt = 0.5
 		self.MaxProd = 10
 		#self.l_cs = self.l_it / (4 * self.dt)
@@ -53,7 +54,7 @@ class Player:
 		self.l_cs[time] = self.l_it[time] / (4 * self.dt)
 		self.h_r[time] = self.l_cs[time] * self.COP_cs * self.dt
 
-		if self.prices[time] * self.h_r[time] < self.MaxProd * self.prices[time + self.horizon]:
+		if self.prices_purchase[time] * self.h_r[time] < self.MaxProd * self.prices_sale[time]:
 			self.h_dc[time] = self.MaxProd
 			self.l_hp[time] = self.h_dc[time] / (self.COP_hp * self.dt)
 			self.alpha[time] = self.l_hp[time] * (self.COP_hp - 1) * self.dt / self.h_r[
@@ -64,7 +65,7 @@ class Player:
 		load = 0
 		load += self.random_lambda[time] * (1 + 1 / (4 * self.dt)) * self.l_it[time] + self.alpha[time] * self.h_r[time] * (
 						1 / ((self.COP_hp - 1) * self.dt)) * (
-						   self.random_lambda[time] - self.prices[time] * self.COP_hp * self.dt)
+						   self.random_lambda[time] - self.prices_sale[time] * self.COP_hp * self.dt)
 
 		return load
 
@@ -72,7 +73,7 @@ class Player:
 		res = 0
 		for i in range(0, 48):
 			res += self.random_lambda[i] * (1 + 1 / (4 * self.dt)) * self.l_it[i] + self.alpha[i] * self.h_r[i] * (1 / ((self.COP_hp - 1) * self.dt)) * (
-				self.random_lambda[i] - self.prices[i] * self.COP_hp * self.dt)
+				self.random_lambda[i] - self.prices_sale[i] * self.COP_hp * self.dt)
 		return res
 
 
