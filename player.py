@@ -30,10 +30,8 @@ class Player:
 		self.prices_sale =np.random.rand(self.horizon)
 		self.dt = 0.5
 		self.MaxProd = 10
-		#self.l_cs = self.l_it / (4 * self.dt)
-		#self.h_r = self.l_cs * self.COP_cs * self.dt
-		self.l_cs = np.ones(48)
-		self.h_r = np.ones(48)
+		self.l_cs = self.l_it / (4 * self.dt)
+		self.h_r = self.l_cs * self.COP_cs * self.dt
 		self.l_hp = np.ones(self.horizon)
 		self.h_dc = np.ones(self.horizon)
 		self.alpha = np.zeros(48)
@@ -51,9 +49,6 @@ class Player:
 		return load
 
 	def take_decision(self, time):
-		self.l_cs[time] = self.l_it[time] / (4 * self.dt)
-		self.h_r[time] = self.l_cs[time] * self.COP_cs * self.dt
-
 		if self.prices_purchase[time] * self.h_r[time] < self.MaxProd * self.prices_sale[time]:
 			self.h_dc[time] = self.MaxProd
 			self.l_hp[time] = self.h_dc[time] / (self.COP_hp * self.dt)
@@ -85,5 +80,5 @@ class Player:
 
 if __name__ == "__main__":
 	myplayer = Player()
-	myload = myplayer.compute_load(0)
+	myload = myplayer.compute_all_load()
 	print(myload)
